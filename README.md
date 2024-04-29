@@ -1,7 +1,10 @@
-//cd <kernel_source_code_location>
-cd ~/Linux_for_Tegra/source/kernel/kernel-jammy-src
+## 1. Prerequistie
+ROS2 humble 
+
+## 2. Patch
+```
 git init
-git remote add origin https://github.com/sohyunkim6572/ros2_framework_kernel.git
+git remote add origin https://github.com/sohyunkim6572/humble_modify.git
 git remote -v
 git fetch --all
 git reset --hard origin/main
