@@ -56,7 +56,7 @@ int main(int argc, char * argv[])
   // and provide a sensor message for the current position.
   // Run the callback for the motor slightly faster than the executor update loop.
   auto pendulum_motor = std::make_shared<pendulum_control::PendulumMotor>(
-    std::chrono::nanoseconds(970000), properties);
+    std::chrono::nanoseconds(6700000), properties);
 
   // Create the properties of the PID controller.
   pendulum_control::PIDProperties pid;

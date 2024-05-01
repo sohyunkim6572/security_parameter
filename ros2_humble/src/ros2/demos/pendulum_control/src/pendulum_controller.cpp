@@ -63,7 +63,7 @@ int main(int argc, char * argv[])
   // Instantiate a PendulumController class which will calculate the next motor command.
   // Run the callback for the controller slightly faster than the executor update loop.
   auto pendulum_controller = std::make_shared<pendulum_control::PendulumController>(
-    std::chrono::nanoseconds(960000), pid);
+    std::chrono::nanoseconds(6600000), pid);
 
   // Pass the input arguments to rttest.
   // rttest will store relevant parameters and allocate buffers for data collection
