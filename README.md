@@ -1,11 +1,14 @@
-## 1. Prerequistie
-ROS2 humble 
-
-## 2. Patch
+## 1. Compile
 ```
-git init
-git remote add origin https://github.com/sohyunkim6572/humble_modify.git
-git remote -v
-git fetch --all
-git reset --hard origin/main
-git pull origin main
+cd prio_ros2
+colcon build 
+```
+
+## 2. How to use?
+```
+# Publisher side
+ros2 run motivation talker -r __node:=pub_$node -t sub_$node -p $period -s $pkt_num > $file_name
+
+# Subscriber side
+ros2 run motivation listener -r __node:=sub_$node -t sub_$node -u $util -p $period > $file_name
+```
