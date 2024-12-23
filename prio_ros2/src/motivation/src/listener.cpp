@@ -22,42 +22,19 @@ void print_usage() {
     printf("-t topic_name : Specify the topic on which to subscribe. Defaults to chatter.\n");
 }
 
-void dummy_task(long load) {
-    for (long i = 0; i < load; i++) {
-        __asm__ volatile ("nop");
-        __asm__ volatile ("nop");
-        __asm__ volatile ("nop");
-        __asm__ volatile ("nop");
-        __asm__ volatile ("nop");
-        __asm__ volatile ("nop");
-        __asm__ volatile ("nop");
-        __asm__ volatile ("nop");
-        __asm__ volatile ("nop");
-        __asm__ volatile ("nop");
-    }
-}
-
-long utilization_to_load(double utilization, std::chrono::milliseconds period) {
-    double base_execution_time = 0.1;  // Base time in milliseconds for a unit of work
-    double base_load = 24606;        // Base computational load for the unit of work
-    double desired_execution_time = utilization * period.count(); // Desired execution time in milliseconds
-    //std::cout << "desired_execution_time " << desired_execution_time << std::endl;
-    return static_cast<long>((desired_execution_time * base_load) / base_execution_time);
-}
 
 class Listener : public rclcpp::Node {
 public:
-    Listener(const std::string& topic_name, double utilization, std::chrono::milliseconds period)
-    : Node("listener"), load(utilization_to_load(utilization, period)) {
+    Listener(const std::string& topic_name, std::chrono::milliseconds period)
+    : Node("listener") {
         auto callback = [this, topic_name](const std_msgs::msg::String::SharedPtr msg) -> void {
-	    struct ntptimeval t, t2;
-	    syscall(456, 1, msg->data.c_str());
-            ntp_gettime(&t);       	 
+            struct ntptimeval t, t2;
+            syscall(456, 1, msg->data.c_str());
+            ntp_gettime(&t);
             printf("%s start %s %ld.%09ld\n", topic_name.c_str(), msg->data.c_str(), t.time.tv_sec, t.time.tv_usec);
-        
-	    dummy_task(this->load);
-        
-	    syscall(456, 2, msg->data.c_str());
+
+
+            syscall(456, 2, msg->data.c_str());
             ntp_gettime(&t2);
             printf("%s end %s %ld.%09ld\n", topic_name.c_str(), msg->data.c_str(), t2.time.tv_sec, t2.time.tv_usec);
         };
@@ -71,7 +48,6 @@ private:
 
 int main(int argc, char* argv[]) {
     setvbuf(stdout, NULL, _IONBF, BUFSIZ);
-
     if (rcutils_cli_option_exist(argv, argv + argc, "-h")) {
         print_usage();
         return 0;
@@ -88,18 +64,12 @@ int main(int argc, char* argv[]) {
     std::chrono::milliseconds timer_period = std::chrono::milliseconds(1000);
     char* cli_option2 = rcutils_cli_get_option(argv, argv + argc, "-p");
     if (nullptr != cli_option2) {
-	timer_period = std::chrono::milliseconds(std::stoi(cli_option2));
+        timer_period = std::chrono::milliseconds(std::stoi(cli_option2));
     }
 
-    double utilization = 0.01;
-    char* cli_option3 = rcutils_cli_get_option(argv, argv + argc, "-u");
-    if (nullptr != cli_option3) {
-	utilization = std::stod(cli_option3);
-    }
 
-    auto node = std::make_shared<Listener>(topic, utilization, timer_period);
+    auto node = std::make_shared<Listener>(topic, timer_period);
     rclcpp::spin(node);
     rclcpp::shutdown();
     return 0;
 }
-
