@@ -32,14 +32,16 @@ class Talker : public rclcpp::Node
                         msg1_ = std::make_unique<std_msgs::msg::String>();
                         msg1_->data = "Data#" + std::to_string(count1_++);
                         std::cout<<"LP pub "<<msg1_->data.c_str();
-                        ntp_gettime(&t1);
-                        printf(" %ld.%.9ld\n", t1.time.tv_sec, t1.time.tv_usec);
+                        //ntp_gettime(&t1);
+                        //printf(" %ld.%.9ld\n", t1.time.tv_sec, t1.time.tv_usec);
 
                         //payload add
                         if (pkt_num_)
                                 a = (pkt_num_ * 1024) - (128 * (pkt_num_ / 64));
                         std::string payload(a, 'B');
                         msg1_->data += " " + payload;
+                        ntp_gettime(&t1);
+                        printf(" %ld.%.9ld\n", t1.time.tv_sec, t1.time.tv_usec);
                         pub1_->publish(std::move(msg1_));
                 }
 
@@ -73,7 +75,7 @@ int main(int argc, char * argv[])
     timer_period = std::chrono::milliseconds(std::stoi(timer_period_cli));
   }
 
-  int pkt_num = 0;
+  int pkt_num = 512;
   char * pkt_num_cli = rcutils_cli_get_option(argv, argv + argc, "-s");
   if (nullptr != pkt_num_cli) {
     pkt_num = std::stoi(pkt_num_cli);

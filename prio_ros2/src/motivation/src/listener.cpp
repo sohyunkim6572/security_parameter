@@ -29,14 +29,19 @@ public:
     : Node("listener") {
         auto callback = [this, topic_name](const std_msgs::msg::String::SharedPtr msg) -> void {
             struct ntptimeval t, t2;
-            syscall(456, 1, msg->data.c_str());
+            //syscall(456, 1, msg->data.c_str());
             ntp_gettime(&t);
-            printf("%s start %s %ld.%09ld\n", topic_name.c_str(), msg->data.c_str(), t.time.tv_sec, t.time.tv_usec);
+            std::string filtered_msg = msg->data;
+	    size_t pos = msg->data.find(' ');
+	    if (pos != std::string::npos) {
+	    filtered_msg = msg->data.substr(0, pos);  // "Data#..." 부분만 남김
+}
+	    printf("%s start %s %ld.%09ld\n", topic_name.c_str(), filtered_msg.c_str(), t.time.tv_sec, t.time.tv_usec);           
 
 
-            syscall(456, 2, msg->data.c_str());
+            //syscall(456, 2, msg->data.c_str());
             ntp_gettime(&t2);
-            printf("%s end %s %ld.%09ld\n", topic_name.c_str(), msg->data.c_str(), t2.time.tv_sec, t2.time.tv_usec);
+            printf("%s end %s %ld.%09ld\n", topic_name.c_str(), filtered_msg.c_str(), t2.time.tv_sec, t2.time.tv_usec);           
         };
         sub_ = create_subscription<std_msgs::msg::String>(topic_name, 10, callback);
     }
