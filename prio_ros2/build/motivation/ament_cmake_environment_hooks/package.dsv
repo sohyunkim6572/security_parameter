@@ -1,0 +1,4 @@
+source;share/motivation/local_setup.bash
+source;share/motivation/local_setup.dsv
+source;share/motivation/local_setup.sh
+source;share/motivation/local_setup.zsh

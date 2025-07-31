@@ -13,25 +13,13 @@ find_package(std_msgs REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 add_executable(talker src/talker.cpp)
-add_executable(intra_talker src/intra_talker.cpp)
 add_executable(listener src/listener.cpp)
-add_executable(trace_first src/trace_first.cpp)
-add_executable(trace_medium src/trace_medium.cpp)
-add_executable(trace_last src/trace_last.cpp)
 ament_target_dependencies(talker rclcpp std_msgs)
-ament_target_dependencies(intra_talker rclcpp std_msgs)
 ament_target_dependencies(listener rclcpp std_msgs)
-ament_target_dependencies(trace_first rclcpp std_msgs)
-ament_target_dependencies(trace_medium rclcpp std_msgs)
-ament_target_dependencies(trace_last rclcpp std_msgs)
 
 install(TARGETS
 	talker
-	intra_talker
 	listener
-	trace_first
-        trace_medium
-        trace_last
 	DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
